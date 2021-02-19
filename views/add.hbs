@@ -1,8 +1,30 @@
+<h1>Добавить новый бургер</h1>
 
 
 
-
-
+<form action="/add" method="POST">
+  <div class="input-field">
+    <input id="title" name="title" type="text" class="validate" required>
+    <label for="title">Название бургера</label>
+    <span class="helper-text" data-error="Введите название"></span>
+  </div>
+  <div class="input-field">
+    <input id="about" name="about" type="text" class="validate" required>
+    <label for="about">Содержание</label>
+    <span class="helper-text" data-error="Введите содержание"></span>
+  </div>
+  <div class="input-field">
+    <input id="price" name="price" type="number" class="validate" required>
+    <label for="price">Цена бургера</label>
+    <span class="helper-text" data-error="Введите цену"></span>
+  </div>
+  <div class="input-field">
+    <input id="image" name="image" type="text" class="validate" required>
+    <label for="image">URL изображения</label>
+    <span class="helper-text" data-error="Введите юрл"></span>
+  </div>
+  <button class="btn btn-primary">Dobavit</button>
+</form>
 
 
 
