@@ -1,25 +1,41 @@
 const { Router } = require("express");
 const router = Router();
-const Cart = require("../models/cart");
 const Burger = require("../models/burger");
 
+function mapCartItems(cart) {
+  return cart.items.map((i) => ({
+    ...i.burgerId._doc,
+    id: i.burgerId.id,
+    count: i.count,
+  }));
+}
+function computePrice(burgers) {
+  return burgers.reduce((total, burger) => {
+    return (total += burger.price * burger.count);
+  }, 0);
+}
 router.post("/add", async (req, res) => {
-  const burger = await Burger.getById(req.body.id);
-  await Cart.add(burger);
+  const burger = await Burger.findById(req.body.id);
+  await req.user.addToCart(burger);
   res.redirect("/cart");
 });
 router.delete("/remove/:id", async (req, res) => {
-  const cart = await Cart.remove(req.params.id);
+  await req.user.removeFromCart(req.params.id);
+  const user = await req.user.populate("cart.items.burgerId").execPopulate();
+  const burgers = mapCartItems(user.cart);
+  const cart = { burgers, price: computePrice(burgers) };
 
   res.status(200).json(cart);
 });
 router.get("/", async (req, res) => {
-  const cart = await Cart.fetch();
+  const user = await req.user.populate("cart.items.burgerId").execPopulate();
+  const burgers = mapCartItems(user.cart);
+  console.log(user);
   res.render("cart", {
     title: "Корзина",
     isCart: true,
-    burgers: cart.burgers,
-    price: cart.price,
+    burgers: burgers,
+    price: computePrice(burgers),
   });
 });
 module.exports = router;

@@ -9,13 +9,19 @@ router.get("/", (req, res) => {
 });
 router.post("/", async (req, res) => {
   console.log(req.body);
-  const burger = new Burger(
-    req.body.title,
-    req.body.about,
-    req.body.price,
-    req.body.image
-  );
-  await burger.save();
-  res.redirect("/burgers");
+
+  const burger = new Burger({
+    title: req.body.title,
+    about: req.body.about,
+    price: req.body.price,
+    image: req.body.image,
+    userId: req.user,
+  });
+  try {
+    await burger.save();
+    res.redirect("/burgers");
+  } catch (e) {
+    console.log(e);
+  }
 });
 module.exports = router;
