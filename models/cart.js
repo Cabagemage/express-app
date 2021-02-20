@@ -1,27 +1,30 @@
 const path = require("path");
 const fs = require("fs");
 
-const p = path.join(path.dirname(process.mainModule.filename),  "data", "cart.json");
+const p = path.join(
+  path.dirname(process.mainModule.filename),
+  "data",
+  "cart.json"
+);
 
-class Cart {
-
-
+class Card {
   static async add(burger) {
-    const cart = await Cart.fetch();
+    const cart = await Card.fetch();
 
-    const idx = cart.burgers.findIndex(c => c.id === burger.id);
+    const idx = cart.burgers.findIndex((c) => c.id === course.id);
     const candidate = cart.burgers[idx];
 
     if (candidate) {
-      // burgers exists
+      // курс уже есть
       candidate.count++;
-      burger.burgers[idx] = candidate;
+      cart.burgers[idx] = candidate;
     } else {
-      // nujno dobavit
+      // нужно добавить курс
       burger.count = 1;
       cart.burgers.push(burger);
     }
-    burger.price += +burger.price;
+
+    cart.price += +burger.price;
 
     return new Promise((resolve, reject) => {
       fs.writeFile(p, JSON.stringify(burger), (err) => {
@@ -47,4 +50,4 @@ class Cart {
   }
 }
 
-module.exports = Cart;
+module.exports = Card;
