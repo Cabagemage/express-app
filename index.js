@@ -3,6 +3,7 @@ const exphbs = require("express-handlebars");
 const app = express();
 const homeRoutes = require("./routes/home");
 const aboutRoutes = require("./routes/add");
+const cartRoutes = require("./routes/cart");
 const burgerRoutes = require("./routes/burgers");
 
 const hbs = exphbs.create({
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", homeRoutes);
 app.use("/add", aboutRoutes);
 app.use("/burgers", burgerRoutes);
+app.use("/cart", cartRoutes);
 const { PORT = 9999 } = process.env;
 
 app.listen(PORT, () => {

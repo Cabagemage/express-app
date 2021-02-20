@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
+const burgers = require("../data/burgers.json")
 const fs = require("fs");
 const path = require("path");
 class Burger {
@@ -52,6 +53,12 @@ class Burger {
         }
       );
     });
+  }
+
+  static async getById(id) {
+    await Burger.getAll()
+
+    return burgers.find(c => c.id === id)
   }
 }
 
