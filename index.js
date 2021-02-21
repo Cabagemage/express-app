@@ -11,13 +11,14 @@ const homeRoutes = require("./routes/home");
 const aboutRoutes = require("./routes/add");
 const cartRoutes = require("./routes/cart");
 const ordersRoutes = require("./routes/orders");
+const profileRoutes = require("./routes/profile");
 const authRoutes = require("./routes/auth");
 const burgerRoutes = require("./routes/burgers");
 const Handlebars = require("handlebars");
 const userMiddleware = require("./middlewares/user");
 const keys = require("./keys/keys");
 const errorHandler = require("./middlewares/error");
-
+const fileHandler = require("./middlewares/file");
 const {
   allowInsecurePrototypeAccess,
 } = require("@handlebars/allow-prototype-access");
@@ -45,7 +46,7 @@ app.set("view engine", "hbs");
 app.set("views", "views");
 
 app.use(express.static(path.join(__dirname, "public")));
-
+app.use('/images', express.static(path.join(__dirname, 'images')))
 app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
@@ -55,6 +56,7 @@ app.use(
     store: store,
   })
 );
+app.use(fileHandler.single("avatar"));
 app.use(csrf());
 app.use(flash());
 app.use(varMiddlewares);
@@ -65,7 +67,9 @@ app.use("/orders", ordersRoutes);
 app.use("/burgers", burgerRoutes);
 app.use("/auth", authRoutes);
 app.use("/cart", cartRoutes);
-app.use(errorHandler)
+app.use("/profile", profileRoutes);
+
+app.use(errorHandler);
 const { PORT = 9999 } = process.env;
 // myFirstDatabase?retryWrites=true&w=majority
 async function start() {

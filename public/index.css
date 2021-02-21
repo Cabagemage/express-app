@@ -53,3 +53,8 @@
 .burgers{
   padding-top: 50px;
 }
+
+.avatar{
+  max-width: 300px;
+  height: auto;
+}
