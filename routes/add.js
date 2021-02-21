@@ -10,7 +10,6 @@ router.get("/", auth, (req, res) => {
   });
 });
 router.post("/", auth, async (req, res) => {
-  console.log(req.body);
 
   const burger = new Burger({
     title: req.body.title,

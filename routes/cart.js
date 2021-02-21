@@ -30,7 +30,6 @@ router.delete("/remove/:id", auth, async (req, res) => {
 router.get("/", auth, async (req, res) => {
   const user = await req.user.populate("cart.items.burgerId").execPopulate();
   const burgers = mapCartItems(user.cart);
-  console.log(user);
   res.render("cart", {
     title: "Корзина",
     isCart: true,

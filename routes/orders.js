@@ -38,7 +38,6 @@ router.post("/", auth, async (req, res) => {
       burgers: burgers,
     });
 
-    console.log(order)
     await order.save();
 
     // await req.user.clearCart();

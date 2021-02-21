@@ -6,9 +6,12 @@ const MongoStore = require("connect-mongodb-session")(session);
 const app = express();
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const helmet = require("helmet");
+const compression = require("compression");
 const varMiddlewares = require("./middlewares/variables");
 const homeRoutes = require("./routes/home");
 const aboutRoutes = require("./routes/add");
+
 const cartRoutes = require("./routes/cart");
 const ordersRoutes = require("./routes/orders");
 const profileRoutes = require("./routes/profile");
@@ -44,9 +47,8 @@ app.engine(
 app.set("view engine", "handlebars");
 app.set("view engine", "hbs");
 app.set("views", "views");
-
 app.use(express.static(path.join(__dirname, "public")));
-app.use('/images', express.static(path.join(__dirname, 'images')))
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
@@ -58,6 +60,8 @@ app.use(
 );
 app.use(fileHandler.single("avatar"));
 app.use(csrf());
+app.use(helmet());
+app.use(compression());
 app.use(flash());
 app.use(varMiddlewares);
 app.use(userMiddleware);
