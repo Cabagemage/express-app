@@ -5,7 +5,7 @@ const auth = require("../middlewares/auth");
 
 router.get("/", auth, (req, res) => {
   res.render("add", {
-    title: "О нас",
+    title: "Добавить новый бургер",
     aboutActive: true,
   });
 });

@@ -5,7 +5,7 @@ const toCurrency = (price) => {
   }).format(price);
 };
 
-const toDate = date => {
+const toDate = (date) => {
   return new Intl.DateTimeFormat("ru-RU", {
     day: "2-digit",
     month: "long",
@@ -17,7 +17,7 @@ const toDate = date => {
 };
 document.querySelectorAll(".date").forEach((node) => {
   node.textContent = toDate(node.textContent);
-  console.log(node.textContent)
+  console.log(node.textContent);
 });
 
 document.querySelectorAll(".price").forEach((node) => {
@@ -32,9 +32,12 @@ if ($cart) {
   $cart.addEventListener("click", (event) => {
     if (event.target.classList.contains("js-remove")) {
       const id = event.target.dataset.id;
-
+      const csrf = event.target.dataset.csrf;
       fetch("/cart/remove/" + id, {
         method: "delete",
+        headers: {
+          "X-XSRF-TOKEN": csrf,
+        },
       })
         .then((res) => res.json())
         .then((cart) => {
@@ -46,7 +49,7 @@ if ($cart) {
                 <td>${c.title}</td>
                 <td>${c.count}</td>
                 <td>
-                  <button class="btn btm-small js-remove" data-id="${c.id}">Удалить</button>
+                  <button class="btn btm-small js-remove" data-id="${c.id}" data-csrf="${csrf}">Удалить</button>
                 </td>
               </tr>
               `;
@@ -62,4 +65,4 @@ if ($cart) {
   });
 }
 
-M.Tabs.init(document.querySelectorAll('.tabs'));
+M.Tabs.init(document.querySelectorAll(".tabs"));

@@ -16,11 +16,17 @@ const burgerRoutes = require("./routes/burgers");
 const Handlebars = require("handlebars");
 const userMiddleware = require("./middlewares/user");
 const keys = require("./keys/keys");
+const errorHandler = require("./middlewares/error");
 
 const {
   allowInsecurePrototypeAccess,
 } = require("@handlebars/allow-prototype-access");
 const path = require("path");
+// const hbs = exphbs.create({
+//   defaultLayout: "main",
+//   extname: "hbs",
+// });
+// const password = "bIkjZOMtpP04FRSA";
 
 const store = new MongoStore({
   collection: "sessions",
@@ -59,6 +65,7 @@ app.use("/orders", ordersRoutes);
 app.use("/burgers", burgerRoutes);
 app.use("/auth", authRoutes);
 app.use("/cart", cartRoutes);
+app.use(errorHandler)
 const { PORT = 9999 } = process.env;
 // myFirstDatabase?retryWrites=true&w=majority
 async function start() {
