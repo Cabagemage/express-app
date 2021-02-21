@@ -2,8 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
 const session = require("express-session");
+const MongoStore = require("connect-mongodb-session")(session);
 const app = express();
-const varMiddlewares = require('./middlewares/variables')
+const csrf = require("csurf");
+const flash = require("connect-flash");
+const varMiddlewares = require("./middlewares/variables");
 const homeRoutes = require("./routes/home");
 const aboutRoutes = require("./routes/add");
 const cartRoutes = require("./routes/cart");
@@ -11,17 +14,18 @@ const ordersRoutes = require("./routes/orders");
 const authRoutes = require("./routes/auth");
 const burgerRoutes = require("./routes/burgers");
 const Handlebars = require("handlebars");
-const User = require("./models/user");
+const userMiddleware = require("./middlewares/user");
+const keys = require("./keys/keys");
+
 const {
   allowInsecurePrototypeAccess,
 } = require("@handlebars/allow-prototype-access");
 const path = require("path");
-// const hbs = exphbs.create({
-//   defaultLayout: "main",
-//   extname: "hbs",
-// });
-// const password = "bIkjZOMtpP04FRSA";
 
+const store = new MongoStore({
+  collection: "sessions",
+  uri: keys.MONGODB_URI,
+});
 app.engine(
   "hbs",
   exphbs({
@@ -34,18 +38,21 @@ app.set("view engine", "handlebars");
 app.set("view engine", "hbs");
 app.set("views", "views");
 
-
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
-    secret: "fish",
+    secret: keys.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: store,
   })
 );
-app.use(varMiddlewares)
+app.use(csrf());
+app.use(flash());
+app.use(varMiddlewares);
+app.use(userMiddleware);
 app.use("/", homeRoutes);
 app.use("/add", aboutRoutes);
 app.use("/orders", ordersRoutes);
@@ -56,20 +63,10 @@ const { PORT = 9999 } = process.env;
 // myFirstDatabase?retryWrites=true&w=majority
 async function start() {
   try {
-    const url =
-      "mongodb+srv://cabagemage:bIkjZOMtpP04FRSA@cluster0.qkcme.mongodb.net/burgerCafe";
-    await mongoose.connect(url, {
+    await mongoose.connect(keys.MONGODB_URI, {
       useNewUrlParser: true,
     });
-    // const candidate = await User.findOne();
-    // if (!candidate) {
-    //   const user = new User({
-    //     email: "amaka@mail.ru",
-    //     name: "Abaka",
-    //     cart: { items: [] },
-    //   });
-    //   await user.save();
-    // }
+
     app.listen(PORT, () => {
       // Если всё работает, консоль покажет, какой порт приложение слушает
       console.log(`App listening on port ${PORT}`);

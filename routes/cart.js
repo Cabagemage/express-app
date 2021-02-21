@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 const Burger = require("../models/burger");
-
+const auth = require("../middlewares/auth");
 function mapCartItems(cart) {
   return cart.items.map((i) => ({
     ...i.burgerId._doc,
@@ -14,12 +14,12 @@ function computePrice(burgers) {
     return (total += burger.price * burger.count);
   }, 0);
 }
-router.post("/add", async (req, res) => {
+router.post("/add", auth, async (req, res) => {
   const burger = await Burger.findById(req.body.id);
   await req.user.addToCart(burger);
   res.redirect("/cart");
 });
-router.delete("/remove/:id", async (req, res) => {
+router.delete("/remove/:id", auth, async (req, res) => {
   await req.user.removeFromCart(req.params.id);
   const user = await req.user.populate("cart.items.burgerId").execPopulate();
   const burgers = mapCartItems(user.cart);
@@ -27,7 +27,7 @@ router.delete("/remove/:id", async (req, res) => {
 
   res.status(200).json(cart);
 });
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   const user = await req.user.populate("cart.items.burgerId").execPopulate();
   const burgers = mapCartItems(user.cart);
   console.log(user);

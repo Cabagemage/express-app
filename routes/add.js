@@ -1,13 +1,15 @@
 const { Router } = require("express");
 const router = Router();
 const Burger = require("../models/burger");
-router.get("/", (req, res) => {
+const auth = require("../middlewares/auth");
+
+router.get("/", auth, (req, res) => {
   res.render("add", {
     title: "О нас",
     aboutActive: true,
   });
 });
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   console.log(req.body);
 
   const burger = new Burger({

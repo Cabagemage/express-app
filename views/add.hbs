@@ -18,11 +18,13 @@
     <label for="price">Цена бургера</label>
     <span class="helper-text" data-error="Введите цену"></span>
   </div>
+
   <div class="input-field">
     <input id="image" name="image" type="text" class="validate" required>
     <label for="image">URL изображения</label>
     <span class="helper-text" data-error="Введите юрл"></span>
   </div>
+  <input type="hidden" name="_csrf" value={{@root.csrf}}>
   <button class="btn btn-primary">Dobavit</button>
 </form>
 
