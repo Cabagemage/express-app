@@ -1,31 +1,31 @@
 <h1>Korzina</h1>
 <div id="cart">
-{{#if burgers.length}}
-<table>
-  <thead>
-    <tr>
-      <th>Название</th>
-      <th>Количество</th>
-      <th>Действие</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each burgers}}
-    <tr>
-      <td>{{title}}</td>
-      <td>{{count}}</td>
-      <td><button class="btn btn-small js-remove" data-id="{{id}}">Удолить</button></td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
-<p>Цена: <span class="price">{{price}}</span></p>
+  {{#if burgers.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Количество</th>
+        <th>Действие</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each burgers}}
+      <tr>
+        <td>{{title}}</td>
+        <td>{{count}}</td>
+        <td><button class="btn btn-small js-remove" data-id="{{id}}">Удолить</button></td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <p>Цена: <span class="price">{{price}}</span></p>
 
-<form action="/order" method="POST">
-<button type="submit" class="btn">Сделать заказ</button>
-</form>
-{{else}}
-<p>Корзина пуста</p>
+  <form action="/orders" method="POST">
+    <button type="submit" class="btn">Сделать заказ</button>
+  </form>
+  {{else}}
+  <p>Корзина пуста</p>
 
-{{/if}}
+  {{/if}}
 </div>

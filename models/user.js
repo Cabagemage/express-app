@@ -1,7 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
-const burgers = require("../data/burgers.json");
-const fs = require("fs");
-const path = require("path");
+
 const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema({
@@ -57,6 +54,13 @@ userSchema.methods.addToCart = function (burger) {
 
   return this.save();
 };
+userSchema.methods.clearCart = function () {
+  this.cart = { items: []};
+
+  return this.save();
+};
+
+
 
 userSchema.methods.removeFromCart = function (id) {
   let items = [...this.cart.items];

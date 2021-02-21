@@ -1,11 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
+const session = require("express-session");
 const app = express();
+const varMiddlewares = require('./middlewares/variables')
 const homeRoutes = require("./routes/home");
 const aboutRoutes = require("./routes/add");
 const cartRoutes = require("./routes/cart");
 const ordersRoutes = require("./routes/orders");
+const authRoutes = require("./routes/auth");
 const burgerRoutes = require("./routes/burgers");
 const Handlebars = require("handlebars");
 const User = require("./models/user");
@@ -31,23 +34,23 @@ app.set("view engine", "handlebars");
 app.set("view engine", "hbs");
 app.set("views", "views");
 
-app.use(async (req, res, next) => {
-  try {
-    const user = await User.findById("6030f0776ac4676880c9d117");
-    req.user = user;
-    next();
-  } catch (e) {
-    console.log(e);
-  }
-});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(express.urlencoded({ extended: true }));
-
+app.use(
+  session({
+    secret: "fish",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(varMiddlewares)
 app.use("/", homeRoutes);
 app.use("/add", aboutRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/burgers", burgerRoutes);
+app.use("/auth", authRoutes);
 app.use("/cart", cartRoutes);
 const { PORT = 9999 } = process.env;
 // myFirstDatabase?retryWrites=true&w=majority
@@ -58,15 +61,15 @@ async function start() {
     await mongoose.connect(url, {
       useNewUrlParser: true,
     });
-    const candidate = await User.findOne();
-    if (!candidate) {
-      const user = new User({
-        email: "amaka@mail.ru",
-        name: "Abaka",
-        cart: { items: [] },
-      });
-      await user.save();
-    }
+    // const candidate = await User.findOne();
+    // if (!candidate) {
+    //   const user = new User({
+    //     email: "amaka@mail.ru",
+    //     name: "Abaka",
+    //     cart: { items: [] },
+    //   });
+    //   await user.save();
+    // }
     app.listen(PORT, () => {
       // Если всё работает, консоль покажет, какой порт приложение слушает
       console.log(`App listening on port ${PORT}`);

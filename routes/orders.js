@@ -1,14 +1,50 @@
 const { Router } = require("express");
 const router = Router();
-const Order = require('../models/order')
-router.get('/', async (req, res) => {
-  res.render('orders', {
-    isOrder: true,
-    title: "Заказы"
-  })
-})
-router.post('/', async (req, res) => {
-  const user = await req.user.populate('cart.items.burgerId').execPopulate()
-  res.redirect('/orders')
-})
-module.exports = router
+const Order = require("../models/order");
+router.get("/", async (req, res) => {
+  try {
+    const orders = await Order.find({ "user.userId": req.user.id }).populate(
+      "user.userId"
+    );
+    res.render("orders", {
+      isOrder: true,
+      title: "Заказы",
+      orders: orders.map((o) => {
+        return {
+          ...o._doc,
+          price: o.burgers.reduce((total, c) => {
+            return (total += c.count * c.burger.price);
+          }, 0),
+        };
+      }),
+    });
+  } catch (e) {}
+});
+router.post("/", async (req, res) => {
+  try {
+    const user = await req.user.populate("cart.items.burgerId").execPopulate();
+
+    const burgers = user.cart.items.map((i) => ({
+      count: i.count,
+      burger: { ...i.burgerId._doc },
+    }));
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user,
+      },
+      burgers: burgers,
+    });
+
+    console.log(order)
+    await order.save();
+
+    // await req.user.clearCart();
+
+    res.redirect("/orders");
+  } catch (e) {
+    console.log(e);
+  }
+});
+module.exports = router;
